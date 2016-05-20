@@ -49,7 +49,7 @@ export class FirehoseLogger extends winston.Transport {
     this.level = options.level || 'info';
 
     const streamName = options.streamName;
-    const firehoseOptions = this.firehoseOptions || {};
+    const firehoseOptions = options.firehoseOptions || {};
 
     this.firehoser = options.firehoser || new FireHoser(streamName, firehoseOptions);
   }
