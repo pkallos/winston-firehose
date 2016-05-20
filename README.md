@@ -6,7 +6,7 @@ NodeJS module, winston logging transport which writes to AWS Firehose.
 You can add this logger transport with the following code:
 
 ```javascript
-var winston = request('winston');
+var winston = require('winston');
 var WFirehose = require('winston-firehose');
 
 // register the transport
