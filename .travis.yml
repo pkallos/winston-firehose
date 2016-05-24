@@ -1,0 +1,10 @@
+language: javascript
+before_script:
+  - npm install -g jasmine
+node_js:
+  - "5"
+  - "5.1"
+  - "4"
+  - "4.2"
+  - "4.1"
+  - "4.0"
