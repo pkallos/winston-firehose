@@ -8,7 +8,7 @@ AWS.config.setPromisesDependency(Promise);
 export class IFireHoser {
   constructor(streamName, firehoseOptions) {
     // new.target doesn't work with babel and nodejs <= 4.0.0
-    // so leaing this out for now
+    // so leaving this out for now
     //if (new.target === IFireHoser) {
     //  throw new TypeError("Cannot construct Abstract instances directly");
     //}
