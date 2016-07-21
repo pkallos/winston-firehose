@@ -1,4 +1,3 @@
-const util = require('util');
 const winston = require('winston');
 const AWS = require('aws-sdk');
 const Promise = require('bluebird');
@@ -6,19 +5,20 @@ const Promise = require('bluebird');
 AWS.config.setPromisesDependency(Promise);
 
 export class IFireHoser {
+  // eslint-disable-next-line no-useless-constructor, no-unused-vars
   constructor(streamName, firehoseOptions) {
     // new.target doesn't work with babel and nodejs <= 4.0.0
     // so leaving this out for now
-    //if (new.target === IFireHoser) {
-    //  throw new TypeError("Cannot construct Abstract instances directly");
-    //}
+    // if (new.target === IFireHoser) {
+    //  throw new TypeError('Cannot construct Abstract instances directly');
+    // }
   }
 
   /**
    * @returns Promise containing the recordId
    */
-  send(message) {
-    throw new Error("Not Implemented.");
+  send(message) { // eslint-disable-line no-unused-vars
+    throw new Error('Not Implemented.');
   }
 }
 
@@ -36,8 +36,8 @@ export class FireHoser extends IFireHoser {
     const params = {
       DeliveryStreamName: this.streamName,
       Record: {
-        Data: message
-      }
+        Data: message,
+      },
     };
 
     return this.firehose.putRecord(params).promise();
@@ -59,9 +59,9 @@ export class FirehoseLogger extends winston.Transport {
   log(level, msg, meta, callback) {
     const message = {
       timestamp: (new Date()).toISOString(),
-      level: level,
+      level,
       message: msg,
-      meta: meta
+      meta,
     };
 
     this.firehoser.send(JSON.stringify(message));

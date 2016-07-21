@@ -12,4 +12,4 @@ class MockFireHoser extends fh.IFireHoser {
   }
 }
 
-module.exports = MockFireHoser
+module.exports = MockFireHoser;
