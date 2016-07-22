@@ -64,9 +64,11 @@ export class FirehoseLogger extends winston.Transport {
       meta,
     };
 
-    this.firehoser.send(JSON.stringify(message)).then(
+    return this.firehoser.send(JSON.stringify(message)).then(
       () => callback(null, true),
-      e => callback(e, false)
-    );
+      e => {
+        callback(e, false);
+        throw new Error(e);
+      });
   }
 }
