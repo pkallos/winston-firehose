@@ -1,6 +1,6 @@
 {
   "name": "winston-firehose",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Winston logging transport for logging into Amazon AWS Firehose",
   "main": "lib/index.js",
   "scripts": {
