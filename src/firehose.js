@@ -1,6 +1,5 @@
 const winston = require('winston');
 const AWS = require('aws-sdk');
-const Promise = require('bluebird');
 
 AWS.config.setPromisesDependency(Promise);
 
