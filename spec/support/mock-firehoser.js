@@ -1,5 +1,4 @@
 const fh = require('../../src/firehose');
-const Promise = require('bluebird');
 
 class MockFireHoser extends fh.IFireHoser {
   constructor(streamName, firehoseOptions) {
