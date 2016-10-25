@@ -48,6 +48,7 @@ export class FirehoseLogger extends winston.Transport {
     super(options);
     this.name = 'FirehoseLogger';
     this.level = options.level || 'info';
+    this.formatter = options.formatter || JSON.stringify;
 
     const streamName = options.streamName;
     const firehoseOptions = options.firehoseOptions || {};
@@ -63,7 +64,7 @@ export class FirehoseLogger extends winston.Transport {
       meta,
     };
 
-    return this.firehoser.send(JSON.stringify(message)).then(
+    return this.firehoser.send(this.formatter(message)).then(
       () => callback(null, true),
       e => {
         callback(e, false);
