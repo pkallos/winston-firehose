@@ -4,6 +4,12 @@
 
 NodeJS module, winston logging transport which writes to AWS Firehose.
 
+## Installation
+[![NPM](https://nodei.co/npm/winston-firehose.png)](https://npmjs.org/package/winston-firehose)
+```bash
+npm install winston-firehose
+```
+
 ## Usage
 
 You can add this logger transport with the following code:
