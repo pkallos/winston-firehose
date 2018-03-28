@@ -1,37 +1,61 @@
-## Welcome to GitHub Pages
+[![Build Status](https://travis-ci.org/pkallos/winston-firehose.svg?branch=master)](https://travis-ci.org/pkallos/winston-firehose)
 
-You can use the [editor on GitHub](https://github.com/pkallos/winston-firehose/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+# winston-firehose 
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+NodeJS module, winston logging transport which writes to AWS Firehose.
 
-### Markdown
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
+## Installation
+[![NPM](https://nodei.co/npm/winston-firehose.png)](https://npmjs.org/package/winston-firehose)
+```bash
+npm install winston-firehose
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+## Usage
 
-### Jekyll Themes
+You can add this logger transport with the following code:
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/pkallos/winston-firehose/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+```javascript
+var winston = require('winston');
+var WFirehose = require('winston-firehose');
 
-### Support or Contact
+// register the transport
+var logger = new (winston.Logger)({
+    transports: [
+      new WFirehose({
+        'streamName': 'firehose_stream_name',
+        'firehoseOptions': {
+          'region': 'us-east-1'
+        }
+      })
+    ]
+  });
+  
+// log away!!
+// with just a string
+logger.info('This is the log message!');
 
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+// or with meta info
+logger.info('This is the log message!', { snakes: 'delicious' }); 
+```
+
+This will write messages as strings (using JSON.stringify) into Firehose in the following format:
+```
+{
+  timestamp: 2016-05-20T22:48:01.106Z,
+  level: "info",
+  message: "This is the log message!",
+  meta: { snakes: "delicious" }
+};
+```
+
+## Options
+
+`streamName (string) - required` The name of the Firehose stream to write to.
+
+`firehoseOptions (object) - optional/suggested` The Firehose options that are passed directly to the constructor,
+ [documented by AWS here](http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Firehose.html#constructor-property)
+
+## Details
+
+At the moment this logger sends (unacknowledged!) log messages into firehose. Right now the behavior if the log
+message fails to write to Firehose is simply to do absolutely nothing and fail silently.
