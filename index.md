@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/pkallos/winston-firehose.svg?branch=master)](https://travis-ci.org/pkallos/winston-firehose)
 
-# winston-firehose 
+# [Winston Firehose](https://www.philkallos.com/winston-firehose/)
 
 NodeJS module, winston logging transport which writes to AWS Firehose.
 
