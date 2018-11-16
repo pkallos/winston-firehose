@@ -1,3 +1,3 @@
-const firehose = require('./firehose');
+const { FirehoseLogger } = require('./firehose');
 
-module.exports = firehose.FirehoseLogger;
+module.exports = FirehoseLogger;

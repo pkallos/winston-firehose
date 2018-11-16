@@ -1,9 +1,9 @@
-const winston = require('winston');
+const Transport = require('winston-transport');
 const AWS = require('aws-sdk');
 
 AWS.config.setPromisesDependency(Promise);
 
-export class IFireHoser {
+const IFireHoser = class IFireHoser {
   // eslint-disable-next-line no-useless-constructor, no-unused-vars
   constructor(streamName, firehoseOptions) {
     // new.target doesn't work with babel and nodejs <= 4.0.0
@@ -19,9 +19,9 @@ export class IFireHoser {
   send(message) { // eslint-disable-line no-unused-vars
     throw new Error('Not Implemented.');
   }
-}
+};
 
-export class FireHoser extends IFireHoser {
+const FireHoser = class FireHoser extends IFireHoser {
   constructor(streamName, firehoseOptions) {
     super(streamName, firehoseOptions);
     this.streamName = streamName;
@@ -41,9 +41,9 @@ export class FireHoser extends IFireHoser {
 
     return this.firehose.putRecord(params).promise();
   }
-}
+};
 
-export class FirehoseLogger extends winston.Transport {
+const FirehoseLogger = class FirehoseLogger extends Transport {
   constructor(options) {
     super(options);
     this.name = 'FirehoseLogger';
@@ -56,19 +56,10 @@ export class FirehoseLogger extends winston.Transport {
     this.firehoser = options.firehoser || new FireHoser(streamName, firehoseOptions);
   }
 
-  log(level, msg, meta, callback) {
-    const message = {
-      timestamp: (new Date()).toISOString(),
-      level,
-      message: msg,
-      meta,
-    };
-
-    return this.firehoser.send(this.formatter(message)).then(
-      () => callback(null, true),
-      e => {
-        callback(e, false);
-        throw new Error(e);
-      });
+  log(info) {
+    const message = Object.assign({ timestamp: (new Date()).toISOString() }, info);
+    return this.firehoser.send(this.formatter(message));
   }
-}
+};
+
+module.exports = { IFireHoser, FireHoser, FirehoseLogger };

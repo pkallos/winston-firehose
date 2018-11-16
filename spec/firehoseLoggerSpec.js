@@ -2,30 +2,34 @@ const winston = require('winston');
 const MockFireHoser = require('./support/mock-firehoser');
 const WFireHose = require('../src/index.js');
 
-describe('firehose logger transport', () => {
-  const m = new MockFireHoser('test-stream', {});
-  const message = 'test message';
+describe('firehose logger transport', function () {
+  beforeAll(function () {
+    this.m = new MockFireHoser('test-stream', {});
+    this.message = 'test message';
+    spyOn(this.m, 'send').and.callThrough();
+  });
 
-  it('logs a message', done => {
+  it('logs a message', function (done) {
+    const { m, message } = this;
     m.send(message)
       .then(response => {
         expect(response).toBe(message);
         done();
       })
-      .catch(e => done(e));
+      .catch(done);
   });
 
-  it('affixes to winston', done => {
-    const logger = new (winston.Logger)({
+  it('affixes to winston', function (done) {
+    const { m, message } = this;
+    m.send.calls.reset();
+    const logger = winston.createLogger({
       transports: [
-        new (WFireHose)({ firehoser: m }),
+        new WFireHose({ firehoser: m }),
       ],
     });
 
-    logger.info(message, (err, level, response) => {
-      if (err) return done(err);
-      expect(response).toBe(message);
-      return done();
-    });
+    logger.info(message);
+    expect(m.send).toHaveBeenCalled();
+    done();
   });
 });
