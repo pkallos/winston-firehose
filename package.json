@@ -22,8 +22,7 @@
   },
   "homepage": "https://github.com/pkallos/winston-firehose#readme",
   "dependencies": {
-    "aws-sdk": "^2.3.14",
-    "winston": "^3.1.0"
+    "aws-sdk": "^2.3.14"
   },
   "devDependencies": {
     "eslint": "^2.9.0",
@@ -32,6 +31,9 @@
     "eslint-plugin-jsx-a11y": "^1.2.0",
     "eslint-plugin-react": "^5.2.2",
     "jasmine": "^2.5.2"
+  },
+  "peerDependencies": {
+    "winston": "^3.1.0"
   },
   "eslintConfig": {
     "extends": "airbnb",
