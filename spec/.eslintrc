@@ -1,7 +1,7 @@
 {
-    "rules": {
-      "no-console": "off",
-      "func-names": "off",
-      "prefer-arrow-callback": "off"
-    }
+  "rules": {
+    "no-console": "off",
+    "func-names": "off",
+    "prefer-arrow-callback": "off"
   }
+}
