@@ -1,7 +1,7 @@
 const fh = require('../src/firehose.js');
 
 describe('firehoser module', () => {
-  // pending('comment out this line if you want to really log something');
+  pending('comment out this line if you want to really log something');
   // Replace 'donkey' with a real stream name
   const FH = new fh.FireHoser('donkey', {
     region: 'us-east-1',
