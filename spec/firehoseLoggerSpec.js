@@ -19,7 +19,7 @@ describe('firehose logger transport', function () {
       .catch(done);
   });
 
-  it('affixes to winston', function (done) {
+  it('affixes to winston', function () {
     const { m, message } = this;
     m.send.calls.reset();
     const logger = winston.createLogger({
@@ -30,6 +30,5 @@ describe('firehose logger transport', function () {
 
     logger.info(message);
     expect(m.send).toHaveBeenCalled();
-    done();
   });
 });

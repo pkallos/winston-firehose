@@ -14,6 +14,7 @@ describe('firehoser module', () => {
       message: 'test message',
       meta: { rich: 'meta' },
     };
+
     FH.send(JSON.stringify(message)).then(m => {
       console.log(m);
       done(m);
