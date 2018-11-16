@@ -19,7 +19,7 @@ var winston = require('winston');
 var WFirehose = require('winston-firehose');
 
 // register the transport
-var logger = new (winston.Logger)({
+var logger = winston.createLogger({
     transports: [
       new WFirehose({
         'streamName': 'firehose_stream_name',
@@ -29,13 +29,13 @@ var logger = new (winston.Logger)({
       })
     ]
   });
-  
+
 // log away!!
 // with just a string
 logger.info('This is the log message!');
 
 // or with meta info
-logger.info('This is the log message!', { snakes: 'delicious' }); 
+logger.info('This is the log message!', { snakes: 'delicious' });
 ```
 
 This will write messages as strings (using JSON.stringify) into Firehose in the following format:
