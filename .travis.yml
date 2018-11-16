@@ -2,6 +2,5 @@ language: node_js
 before_script:
   - npm install jasmine winston
 node_js:
-  - "5"
-  - "5.1"
-  - "7"
+  - "8"
+  - "10"
