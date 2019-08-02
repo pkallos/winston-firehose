@@ -52,8 +52,8 @@ const FirehoseLogger = class FirehoseLogger extends Transport {
 
     const streamName = options.streamName;
     const firehoseOptions = options.firehoseOptions || {};
-    if (options.region) {
-      AWS.config.update({ region: options.region });
+    if (firehoseOptions.region) {
+      AWS.config.update({ region: firehoseOptions.region });
     }
 
     this.firehoser = options.firehoser || new FireHoser(streamName, firehoseOptions);
