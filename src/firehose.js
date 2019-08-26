@@ -59,7 +59,10 @@ const FirehoseLogger = class FirehoseLogger extends Transport {
     this.firehoser = options.firehoser || new FireHoser(streamName, firehoseOptions);
   }
 
-  log(info) {
+  log(info, callback) {
+    if (callback) {
+      setImmediate(callback);
+    }
     const message = Object.assign({ timestamp: (new Date()).toISOString() }, info);
     return this.firehoser.send(this.formatter(message));
   }
