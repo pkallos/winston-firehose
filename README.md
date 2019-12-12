@@ -38,13 +38,13 @@ logger.info('This is the log message!');
 logger.info('This is the log message!', { snakes: 'delicious' });
 ```
 
-This will write messages as strings (using JSON.stringify) into Firehose in the following format:
+This will write messages as strings (using logger or transport's format) into Firehose.
+By default `winston.format.json()` will be used:
 ```
 {
-  timestamp: 2016-05-20T22:48:01.106Z,
   level: "info",
   message: "This is the log message!",
-  meta: { snakes: "delicious" }
+  snakes: "delicious"
 };
 ```
 
