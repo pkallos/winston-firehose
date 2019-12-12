@@ -48,8 +48,6 @@ const FirehoseLogger = class FirehoseLogger extends Transport {
   constructor(options) {
     super(options);
     this.name = 'FirehoseLogger';
-    this.level = options.level || 'info';
-
     const streamName = options.streamName;
     const firehoseOptions = options.firehoseOptions || {};
     if (firehoseOptions.region) {
