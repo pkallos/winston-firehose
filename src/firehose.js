@@ -48,6 +48,13 @@ const FirehoseLogger = class FirehoseLogger extends Transport {
   constructor(options) {
     super(options);
     this.name = 'FirehoseLogger';
+    if (!options.useLoggerLevel) {
+      this.level = options.level || 'info';
+    }
+    if (!options.useLoggerFormat) {
+      this.formatter = options.formatter || JSON.stringify;
+    }
+
     const streamName = options.streamName;
     const firehoseOptions = options.firehoseOptions || {};
     if (firehoseOptions.region) {
@@ -61,7 +68,11 @@ const FirehoseLogger = class FirehoseLogger extends Transport {
     if (callback) {
       setImmediate(callback);
     }
-    const message = info[MESSAGE];
+    let message = info[MESSAGE];
+    if (this.formatter) {
+      message = Object.assign({ timestamp: (new Date()).toISOString() }, info);
+      message = this.formatter(message);
+    }
     return this.firehoser.send(message);
   }
 };
