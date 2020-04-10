@@ -38,10 +38,10 @@ logger.info('This is the log message!');
 logger.info('This is the log message!', { snakes: 'delicious' });
 ```
 
-This will write messages as strings (using logger or transport's format) into Firehose.
-By default `winston.format.json()` will be used:
+This will write messages as strings (using JSON.stringify) into Firehose in the following format:
 ```
 {
+  timestamp: "2016-05-20T22:48:01.106Z",
   level: "info",
   message: "This is the log message!",
   snakes: "delicious"
@@ -54,6 +54,10 @@ By default `winston.format.json()` will be used:
 
 `firehoseOptions (object) - optional/suggested` The Firehose options that are passed directly to the constructor,
  [documented by AWS here](http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Firehose.html#constructor-property)
+
+ `useLoggerLevel (boolean) - optional` Use winston logger level if set to true. Transport level will default to `info` if undefined.
+
+ `useLoggerFormat (boolean) - optional` Use winston logger format if set to true. Transport format will default to `JSON.stringify` if undefined.
 
 ## Details
 
