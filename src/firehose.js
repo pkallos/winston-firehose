@@ -40,8 +40,8 @@ const FireHoser = class FireHoser extends IFireHoser {
       },
     };
 
-    return this.firehose.putRecord(params).promise().catch(() => {
-      // Do nothing?
+    return this.firehose.putRecord(params).promise().catch((err) => {
+      console.error(err)
     });
   }
 };
