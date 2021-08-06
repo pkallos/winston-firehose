@@ -33,4 +33,49 @@ describe('firehose logger transport', function () {
 
     expect(mockFirehoser.send).toHaveBeenCalled();
   });
+
+  it('sends a message', function () {
+    const firehose = new WFireHose({ firehoser: mockFirehoser });
+    const logger = winston.createLogger({
+      transports: [firehose],
+    });
+
+    logger.info(message);
+
+    expect(mockFirehoser.send).toHaveBeenCalledWith(
+      '{"timestamp":"2021-08-06T19:17:28.000Z","message":"test message","level":"info"}'
+    );
+  });
+
+  it('emits a "logged" event', function (done) {
+    const firehose = new WFireHose({ firehoser: mockFirehoser });
+    const logger = winston.createLogger({
+      transports: [firehose],
+    });
+
+    firehose.on('logged', (loggedMessage) => {
+      expect(loggedMessage).toEqual(
+        '{"timestamp":"2021-08-06T19:17:28.000Z","message":"test message","level":"info"}'
+      );
+      done();
+    });
+
+    logger.info(message);
+  });
+
+  it('emits an "error" event', function (done) {
+    mockFirehoser.send.and.returnValue(Promise.reject(new Error('send failure')));
+
+    const firehose = new WFireHose({ firehoser: mockFirehoser });
+    const logger = winston.createLogger({
+      transports: [firehose],
+    });
+
+    logger.on('error', (err) => {
+      expect(err).toEqual(new Error('send failure'));
+      done();
+    });
+
+    logger.info(message);
+  });
 });

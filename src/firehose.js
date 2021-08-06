@@ -65,6 +65,7 @@ const FirehoseLogger = class FirehoseLogger extends Transport {
   }
 
   log(info, callback) {
+    // Fire and forget so we don't back up the stream.
     if (callback) {
       setImmediate(callback);
     }
@@ -73,7 +74,14 @@ const FirehoseLogger = class FirehoseLogger extends Transport {
       message = Object.assign({ timestamp: (new Date()).toISOString() }, info);
       message = this.formatter(message);
     }
-    return this.firehoser.send(message);
+    this.firehoser
+      .send(message)
+      .then(() => {
+        this.emit('logged', message);
+      })
+      .catch((err) => {
+        this.emit('error', err);
+      });
   }
 };
 
