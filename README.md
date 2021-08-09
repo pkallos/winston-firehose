@@ -61,5 +61,5 @@ This will write messages as strings (using JSON.stringify) into Firehose in the 
 
 ## Details
 
-At the moment this logger sends (unacknowledged!) log messages into firehose. Right now the behavior if the log
-message fails to write to Firehose is simply to do absolutely nothing and fail silently.
+At the moment this logger sends (unacknowledged!) log messages into firehose. The behavior if the log
+message fails to write to Firehose is to emit an 'error' event.
