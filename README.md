@@ -13,13 +13,13 @@ npm install winston-firehose
 You can add this logger transport with the following code:
 
 ```javascript
-var winston = require('winston');
-var WFirehose = require('winston-firehose');
+const winston = require('winston');
+const FirehoseTransport = require('winston-firehose');
 
 // register the transport
-var logger = winston.createLogger({
+const logger = winston.createLogger({
     transports: [
-      new WFirehose({
+      new FirehoseTransport({
         'streamName': 'firehose_stream_name',
         'firehoseOptions': {
           'region': 'us-east-1'

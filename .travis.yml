@@ -1,6 +1,0 @@
-language: node_js
-before_script:
-  - npm install jasmine winston
-node_js:
-  - "8"
-  - "10"
