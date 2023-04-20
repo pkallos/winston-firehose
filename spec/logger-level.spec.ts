@@ -1,6 +1,6 @@
+import { FirehoseTransport } from "@/firehose-transport";
 import winston from 'winston';
 import { MockSender } from './support/test-sender';
-import { FirehoseTransport } from "@/firehose-transport";
 
 describe('firehose logger transport level', function () {
 

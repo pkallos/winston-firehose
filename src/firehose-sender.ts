@@ -2,6 +2,13 @@ import { FirehoseClient, FirehoseClientConfig, PutRecordCommand, PutRecordComman
 import { MessageSender } from './interfaces';
 
 
+/**
+ * Sender implementation that pipes records into AWS Kinesis Firehose
+ *
+ * @export
+ * @class FirehoseSender
+ * @implements {MessageSender}
+ */
 export class FirehoseSender implements MessageSender {
   private firehose: FirehoseClient;
 

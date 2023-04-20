@@ -6,11 +6,26 @@ import { MessageSender } from './interfaces';
 import { DefaultFormatter, FirehoseTransportOptions, FormatterFunc } from './types';
 
 
+/**
+ * Winston transport that pipes log messages into AWS Kinesis Firehose.
+ *
+ * @export
+ * @class FirehoseTransport
+ * @extends {Transport}
+ */
 export class FirehoseTransport extends Transport {
+
   private sender: MessageSender;
   private formatter?: FormatterFunc;
   private name: string;
 
+
+  /**
+   * Creates an instance of FirehoseTransport.
+   *
+   * @param {FirehoseTransportOptions} options
+   * @memberof FirehoseTransport
+   */
   constructor(options: FirehoseTransportOptions) {
     super(options);
     this.name = "FirehoseLogger";
