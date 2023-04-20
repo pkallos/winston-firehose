@@ -1,10 +1,9 @@
-import { DefaultFormatter, FirehoseTransportOptions, FormatterFunc } from '@/types';
-import AWS from 'aws-sdk';
+
 import { MESSAGE } from 'triple-beam';
 import Transport from 'winston-transport';
 import { FirehoseSender } from './firehose-sender';
 import { MessageSender } from './interfaces';
-
+import { DefaultFormatter, FirehoseTransportOptions, FormatterFunc } from './types';
 
 
 export class FirehoseTransport extends Transport {
@@ -26,9 +25,6 @@ export class FirehoseTransport extends Transport {
 
     const streamName = options.streamName;
     const firehoseOptions = options.firehoseOptions || {};
-    if (firehoseOptions.region) {
-      AWS.config.update({ region: firehoseOptions.region });
-    }
 
     this.sender = options.firehoseSender ?? new FirehoseSender(streamName, firehoseOptions);
   }

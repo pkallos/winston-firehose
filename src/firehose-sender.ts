@@ -1,27 +1,27 @@
-import { Firehose } from 'aws-sdk';
+import { FirehoseClient, FirehoseClientConfig, PutRecordCommand, PutRecordCommandInput } from "@aws-sdk/client-firehose";
 import { MessageSender } from './interfaces';
-import AWS from 'aws-sdk';
 
-AWS.config.setPromisesDependency(Promise);
 
 export class FirehoseSender implements MessageSender {
-  private firehose: Firehose;
+  private firehose: FirehoseClient;
 
   constructor(
     private streamName: string,
-    private firehoseOptions: Firehose.ClientConfiguration = {}
+    private firehoseOptions: FirehoseClientConfig = {}
   ) {
-    this.firehose = new Firehose(firehoseOptions);
+    this.firehose = new FirehoseClient(firehoseOptions);
   }
 
   async send(message: string) {
-    const params: Firehose.PutRecordInput = {
+    const params: PutRecordCommandInput = {
       DeliveryStreamName: this.streamName,
       Record: {
-        Data: message,
+        Data: Buffer.from(message),
       },
     };
 
-    return this.firehose.putRecord(params).promise();
+    const command = new PutRecordCommand(params);
+
+    return this.firehose.send(command);
   }
 }

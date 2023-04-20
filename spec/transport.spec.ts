@@ -1,5 +1,5 @@
-import winston from 'winston';
 import { FirehoseTransport } from "@/firehose-transport";
+import winston from 'winston';
 import { MockSender } from "./support/test-sender";
 
 describe('firehose logger transport formatter', function () {

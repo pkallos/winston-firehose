@@ -1,6 +1,7 @@
-import { Firehose } from "aws-sdk";
+import { FirehoseClientConfig } from "@aws-sdk/client-firehose";
 import { TransportStreamOptions } from "winston-transport";
 import { MessageSender } from "./interfaces";
+
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type FormatterFunc = (message: any) => string;
@@ -13,6 +14,6 @@ export type FirehoseTransportOptions = TransportStreamOptions & {
   useLoggerFormat?: boolean;
   formatter?: FormatterFunc;
   streamName: string;
-  firehoseOptions?: Firehose.ClientConfiguration;
+  firehoseOptions?: FirehoseClientConfig;
   firehoseSender?: MessageSender;
 }

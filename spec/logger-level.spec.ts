@@ -4,7 +4,6 @@ import { FirehoseTransport } from "@/firehose-transport";
 
 describe('firehose logger transport level', function () {
 
-
   it('default level is info', function () {
     const mock = new MockSender();
     const message = "test message";
