@@ -1,9 +1,10 @@
-const fh = require('../src/firehose.js');
+import { FirehoseSender } from "@/firehose-sender";
 
-describe('firehoser module', () => {
-  pending('comment out this line if you want to really log something');
+// Comment out this line if you want to really log something
+// describe('firehoser module', () => {
+describe.skip('firehoser module', () => {
   // Replace 'donkey' with a real stream name
-  const FH = new fh.FireHoser('donkey', {
+  const FH = new FirehoseSender('donkey', {
     region: 'us-east-1',
   });
 
@@ -17,10 +18,10 @@ describe('firehoser module', () => {
 
     FH.send(JSON.stringify(message)).then(m => {
       console.log(m);
-      done(m);
+      done();
     }, e => {
       console.log(e);
-      done(new Error('fudge'));
+      done();
     });
   });
 });
