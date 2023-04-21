@@ -32,6 +32,8 @@ export type FirehoseTransportOptions = TransportStreamOptions & {
    * overall logger's format specifcation. Otherwise, the log formatter will default
    * to JSON.stringify, and appends a timestamp.
    *
+   * This option overrides any value for a provided `formatter` option.
+   *
    * @type {boolean}
    */
   useLoggerFormat?: boolean;
@@ -53,6 +55,14 @@ export type FirehoseTransportOptions = TransportStreamOptions & {
    * @type {FirehoseClientConfig}
    */
   firehoseOptions?: FirehoseClientConfig;
+
+  /**
+   * Optional end of line delimiter when passing messages to AWS Fireshose.
+   * Defaults to `""`.
+   *
+   * @type {string}
+   */
+  eol?: string;
 
   /**
    * Injector parameter for mocking and testing.

@@ -18,7 +18,7 @@ export class FirehoseTransport extends Transport {
   private sender: MessageSender;
   private formatter?: FormatterFunc;
   private name: string;
-
+  private eol = "";
 
   /**
    * Creates an instance of FirehoseTransport.
@@ -38,6 +38,10 @@ export class FirehoseTransport extends Transport {
       this.formatter = options.formatter ?? DefaultFormatter;
     }
 
+    if (options.eol !== undefined) {
+      this.eol = options.eol;
+    }
+
     const streamName = options.streamName;
     const firehoseOptions = options.firehoseOptions || {};
 
@@ -50,11 +54,18 @@ export class FirehoseTransport extends Transport {
     if (callback) {
       setImmediate(callback);
     }
+
     let message = info[MESSAGE];
+
     if (this.formatter) {
       message = Object.assign({ timestamp: (new Date()).toISOString() }, info);
       message = this.formatter(message);
     }
+
+    if (this.eol.length) {
+      message += this.eol;
+    }
+
     this.sender
       .send(message)
       .then(() => {
