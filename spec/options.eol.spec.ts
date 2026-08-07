@@ -1,14 +1,14 @@
-import { FirehoseTransport } from "@/firehose-transport";
-import os from 'os';
+import os from 'node:os';
+import { vi } from 'vitest';
 import winston from 'winston';
-import { MockSender } from "./support/test-sender";
+import { FirehoseTransport } from '@/firehose-transport';
+import { MockSender } from './support/test-sender';
 
-describe('firehose logger transport', function () {
-
-  it('defaults to EOL delimiter being empty', function () {
+describe('firehose logger transport', () => {
+  it('defaults to EOL delimiter being empty', () => {
     const mock = new MockSender();
     const message = 'test message';
-    const spy = jest.spyOn(mock, 'send');
+    const spy = vi.spyOn(mock, 'send');
 
     const logger = winston.createLogger({
       transports: [
@@ -26,10 +26,10 @@ describe('firehose logger transport', function () {
     expect(actualMessage.message).toBe(expectedMessage);
   });
 
-  it('allows the user to set EOL delimiter to a single char', function () {
+  it('allows the user to set EOL delimiter to a single char', () => {
     const mock = new MockSender();
     const message = 'test message';
-    const spy = jest.spyOn(mock, 'send');
+    const spy = vi.spyOn(mock, 'send');
 
     const logger = winston.createLogger({
       transports: [
@@ -49,10 +49,10 @@ describe('firehose logger transport', function () {
     expect(actualMessage.message).toBe(message);
   });
 
-  it('allows the user to set EOL delimiter to a newline', function () {
+  it('allows the user to set EOL delimiter to a newline', () => {
     const mock = new MockSender();
     const message = 'test message';
-    const spy = jest.spyOn(mock, 'send');
+    const spy = vi.spyOn(mock, 'send');
 
     const logger = winston.createLogger({
       transports: [
@@ -72,10 +72,10 @@ describe('firehose logger transport', function () {
     expect(actualMessage.message).toBe(message);
   });
 
-  it('allows the user to set EOL delimiter to a single char, with formatter', function () {
+  it('allows the user to set EOL delimiter to a single char, with formatter', () => {
     const mock = new MockSender();
     const message = 'test message';
-    const spy = jest.spyOn(mock, 'send');
+    const spy = vi.spyOn(mock, 'send');
 
     const logger = winston.createLogger({
       transports: [
@@ -83,7 +83,7 @@ describe('firehose logger transport', function () {
           streamName: 'test',
           firehoseSender: mock,
           formatter: (info) => `formatted: ${info.level} ${info.message}`,
-          eol: "$",
+          eol: '$',
         }),
       ],
     });
@@ -95,10 +95,10 @@ describe('firehose logger transport', function () {
     expect(actualMessage).toBe(expectedMessage);
   });
 
-  it('if option.useLoggerFormat is defined, options.eol still works', function () {
+  it('if option.useLoggerFormat is defined, options.eol still works', () => {
     const mock = new MockSender();
     const message = 'test message';
-    const spy = jest.spyOn(mock, 'send');
+    const spy = vi.spyOn(mock, 'send');
 
     const logger = winston.createLogger({
       format: winston.format.simple(),
@@ -112,25 +112,25 @@ describe('firehose logger transport', function () {
       ],
     });
 
-    const expectedMessage = `info: ${message}` + os.EOL;
+    const expectedMessage = `info: ${message}${os.EOL}`;
 
     logger.info(message);
     const actualMessage = spy.mock.calls[0][0];
     expect(actualMessage).toBe(expectedMessage);
   });
 
-  it('if metadata is passed, options.eol still works', function () {
+  it('if metadata is passed, options.eol still works', () => {
     const mock = new MockSender();
     const message = 'test message';
     const meta = { snakes: 'delicious' };
-    const spy = jest.spyOn(mock, 'send');
+    const spy = vi.spyOn(mock, 'send');
 
     const logger = winston.createLogger({
       transports: [
         new FirehoseTransport({
           streamName: 'test',
           firehoseSender: mock,
-          eol: '$'
+          eol: '$',
         }),
       ],
     });

@@ -1,14 +1,14 @@
-import { FirehoseTransport } from "@/firehose-transport";
+import { vi } from 'vitest';
 import winston from 'winston';
-import { MockSender } from "./support/test-sender";
+import { FirehoseTransport } from '@/firehose-transport';
+import { MockSender } from './support/test-sender';
 
-describe('firehose logger transport formatter', function () {
-
-  it('default formatter is JSON.stringify', function () {
+describe('firehose logger transport formatter', () => {
+  it('default formatter is JSON.stringify', () => {
     const mock = new MockSender();
     const message = 'test message';
     const meta = { snakes: 'delicious' };
-    const spy = jest.spyOn(mock, 'send');
+    const spy = vi.spyOn(mock, 'send');
 
     const logger = winston.createLogger({
       transports: [
@@ -27,10 +27,10 @@ describe('firehose logger transport formatter', function () {
     expect(actualMessage.timestamp).toBeDefined();
   });
 
-  it('if option.formatter is defined, use the formatter', function () {
+  it('if option.formatter is defined, use the formatter', () => {
     const mock = new MockSender();
     const message = 'test message';
-    const spy = jest.spyOn(mock, 'send');
+    const spy = vi.spyOn(mock, 'send');
 
     const logger = winston.createLogger({
       transports: [
@@ -47,10 +47,10 @@ describe('firehose logger transport formatter', function () {
     expect(actualMessage).toBe(`formatted: ${message}`);
   });
 
-  it('ignore logger format by default', function () {
+  it('ignore logger format by default', () => {
     const mock = new MockSender();
     const message = 'test message';
-    const spy = jest.spyOn(mock, 'send');
+    const spy = vi.spyOn(mock, 'send');
 
     const logger = winston.createLogger({
       format: winston.format.simple(),
@@ -67,10 +67,10 @@ describe('firehose logger transport formatter', function () {
     expect(actualMessage.message).toBe(message);
   });
 
-  it('if option.useLoggerFormat is defined, use the winston formatter (logger)', function () {
+  it('if option.useLoggerFormat is defined, use the winston formatter (logger)', () => {
     const mock = new MockSender();
     const message = 'test message';
-    const spy = jest.spyOn(mock, 'send');
+    const spy = vi.spyOn(mock, 'send');
 
     const logger = winston.createLogger({
       format: winston.format.simple(),
@@ -78,7 +78,7 @@ describe('firehose logger transport formatter', function () {
         new FirehoseTransport({
           streamName: 'test',
           firehoseSender: mock,
-          useLoggerFormat: true
+          useLoggerFormat: true,
         }),
       ],
     });
@@ -88,10 +88,10 @@ describe('firehose logger transport formatter', function () {
     expect(actualMessage).toBe(`info: ${message}`);
   });
 
-  it('if option.useLoggerFormat is defined, use the winston formatter (transport)', function () {
+  it('if option.useLoggerFormat is defined, use the winston formatter (transport)', () => {
     const mock = new MockSender();
     const message = 'test message';
-    const spy = jest.spyOn(mock, 'send');
+    const spy = vi.spyOn(mock, 'send');
 
     const logger = winston.createLogger({
       transports: [
@@ -99,7 +99,7 @@ describe('firehose logger transport formatter', function () {
           streamName: 'test',
           firehoseSender: mock,
           format: winston.format.simple(),
-          useLoggerFormat: true
+          useLoggerFormat: true,
         }),
       ],
     });

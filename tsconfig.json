@@ -1,24 +1,19 @@
 {
   "compilerOptions": {
-    "target": "es2016",
-    "module": "commonjs",
+    "target": "es2023",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "types": ["node"],
     "declaration": true,
+    "isolatedDeclarations": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "skipLibCheck": true,
     "incremental": true,
-    "outDir": "./dist",
-    "paths": {
-      "@/*": [
-        "./src/*"
-      ]
-    }
+    "rootDir": "./src",
+    "outDir": "./dist"
   },
-  "include": [
-    "src/**/*.ts",
-  ],
-  "exclude": [
-    "node_modules"
-  ],
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"]
 }
