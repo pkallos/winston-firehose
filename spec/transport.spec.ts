@@ -108,4 +108,47 @@ describe("firehose logger transport formatter", () => {
     const actualMessage = spy.mock.calls[0][0];
     expect(actualMessage).toBe(`info: ${message}`);
   });
+
+  it("useLoggerFormat wins when both it and a custom formatter are set", () => {
+    const mock = new MockSender();
+    const message = "test message";
+    const spy = vi.spyOn(mock, "send");
+
+    const logger = winston.createLogger({
+      format: winston.format.simple(),
+      transports: [
+        new FirehoseTransport({
+          streamName: "test",
+          firehoseSender: mock,
+          useLoggerFormat: true,
+          formatter: () => "the custom formatter should never run",
+        }),
+      ],
+    });
+
+    logger.info(message);
+    const actualMessage = spy.mock.calls[0][0];
+    expect(actualMessage).toBe(`info: ${message}`);
+  });
+
+  it("a custom formatter receives a timestamp on its info argument", () => {
+    const mock = new MockSender();
+    const message = "test message";
+    const spy = vi.spyOn(mock, "send");
+
+    const logger = winston.createLogger({
+      transports: [
+        new FirehoseTransport({
+          streamName: "test",
+          firehoseSender: mock,
+          formatter: (info) => String(info.timestamp),
+        }),
+      ],
+    });
+
+    logger.info(message);
+    const actualMessage = spy.mock.calls[0][0];
+    expect(actualMessage).not.toBe("undefined");
+    expect(Number.isNaN(Date.parse(actualMessage))).toBe(false);
+  });
 });
