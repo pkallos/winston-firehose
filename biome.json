@@ -6,7 +6,7 @@
     "useIgnoreFile": true
   },
   "files": {
-    "includes": ["src/**/*.ts", "spec/**/*.ts"]
+    "includes": ["src/**/*.ts", "spec/**/*.ts", "*.ts", "*.mjs", "smoke-test/**/*"]
   },
   "formatter": {
     "enabled": true,
@@ -22,7 +22,7 @@
   },
   "javascript": {
     "formatter": {
-      "quoteStyle": "single",
+      "quoteStyle": "double",
       "semicolons": "always",
       "trailingCommas": "all",
       "arrowParentheses": "always"

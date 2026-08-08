@@ -1,13 +1,13 @@
-import { MESSAGE } from 'triple-beam';
-import Transport from 'winston-transport';
-import { FirehoseSender } from './firehose-sender.js';
-import type { MessageSender } from './interfaces.js';
+import { MESSAGE } from "triple-beam";
+import Transport from "winston-transport";
+import { FirehoseSender } from "./firehose-sender.js";
+import type { MessageSender } from "./interfaces.js";
 import {
   DefaultFormatter,
   type FirehoseTransportOptions,
   type FormatterFunc,
   type LogInfo,
-} from './types.js';
+} from "./types.js";
 
 /**
  * Winston transport that pipes log messages into AWS Kinesis Firehose.
@@ -20,7 +20,7 @@ export class FirehoseTransport extends Transport {
   private sender: MessageSender;
   private formatter?: FormatterFunc;
   name: string;
-  private eol = '';
+  private eol = "";
 
   /**
    * Creates an instance of FirehoseTransport.
@@ -30,10 +30,10 @@ export class FirehoseTransport extends Transport {
    */
   constructor(options: FirehoseTransportOptions) {
     super(options);
-    this.name = 'FirehoseLogger';
+    this.name = "FirehoseLogger";
 
     if (!options.useLoggerLevel) {
-      this.level = options.level ?? 'info';
+      this.level = options.level ?? "info";
     }
 
     if (!options.useLoggerFormat) {
@@ -69,10 +69,10 @@ export class FirehoseTransport extends Transport {
     this.sender
       .send(message)
       .then(() => {
-        this.emit('logged', message);
+        this.emit("logged", message);
       })
       .catch((err: unknown) => {
-        this.emit('error', err);
+        this.emit("error", err);
       });
   }
 }

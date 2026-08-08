@@ -1,19 +1,19 @@
-import { vi } from 'vitest';
-import winston from 'winston';
-import { FirehoseTransport } from '@/firehose-transport';
-import { MockSender } from './support/test-sender';
+import { vi } from "vitest";
+import winston from "winston";
+import { FirehoseTransport } from "@/firehose-transport";
+import { MockSender } from "./support/test-sender";
 
-describe('firehose logger transport formatter', () => {
-  it('default formatter is JSON.stringify', () => {
+describe("firehose logger transport formatter", () => {
+  it("default formatter is JSON.stringify", () => {
     const mock = new MockSender();
-    const message = 'test message';
-    const meta = { snakes: 'delicious' };
-    const spy = vi.spyOn(mock, 'send');
+    const message = "test message";
+    const meta = { snakes: "delicious" };
+    const spy = vi.spyOn(mock, "send");
 
     const logger = winston.createLogger({
       transports: [
         new FirehoseTransport({
-          streamName: 'test',
+          streamName: "test",
           firehoseSender: mock,
         }),
       ],
@@ -22,20 +22,20 @@ describe('firehose logger transport formatter', () => {
     logger.info(message, meta);
     const actualMessage = JSON.parse(spy.mock.calls[0][0]);
     expect(actualMessage.message).toBe(message);
-    expect(actualMessage.snakes).toBe('delicious');
-    expect(actualMessage.level).toBe('info');
+    expect(actualMessage.snakes).toBe("delicious");
+    expect(actualMessage.level).toBe("info");
     expect(actualMessage.timestamp).toBeDefined();
   });
 
-  it('if option.formatter is defined, use the formatter', () => {
+  it("if option.formatter is defined, use the formatter", () => {
     const mock = new MockSender();
-    const message = 'test message';
-    const spy = vi.spyOn(mock, 'send');
+    const message = "test message";
+    const spy = vi.spyOn(mock, "send");
 
     const logger = winston.createLogger({
       transports: [
         new FirehoseTransport({
-          streamName: 'test',
+          streamName: "test",
           firehoseSender: mock,
           formatter: (info) => `formatted: ${info.message}`,
         }),
@@ -47,16 +47,16 @@ describe('firehose logger transport formatter', () => {
     expect(actualMessage).toBe(`formatted: ${message}`);
   });
 
-  it('ignore logger format by default', () => {
+  it("ignore logger format by default", () => {
     const mock = new MockSender();
-    const message = 'test message';
-    const spy = vi.spyOn(mock, 'send');
+    const message = "test message";
+    const spy = vi.spyOn(mock, "send");
 
     const logger = winston.createLogger({
       format: winston.format.simple(),
       transports: [
         new FirehoseTransport({
-          streamName: 'test',
+          streamName: "test",
           firehoseSender: mock,
         }),
       ],
@@ -67,16 +67,16 @@ describe('firehose logger transport formatter', () => {
     expect(actualMessage.message).toBe(message);
   });
 
-  it('if option.useLoggerFormat is defined, use the winston formatter (logger)', () => {
+  it("if option.useLoggerFormat is defined, use the winston formatter (logger)", () => {
     const mock = new MockSender();
-    const message = 'test message';
-    const spy = vi.spyOn(mock, 'send');
+    const message = "test message";
+    const spy = vi.spyOn(mock, "send");
 
     const logger = winston.createLogger({
       format: winston.format.simple(),
       transports: [
         new FirehoseTransport({
-          streamName: 'test',
+          streamName: "test",
           firehoseSender: mock,
           useLoggerFormat: true,
         }),
@@ -88,15 +88,15 @@ describe('firehose logger transport formatter', () => {
     expect(actualMessage).toBe(`info: ${message}`);
   });
 
-  it('if option.useLoggerFormat is defined, use the winston formatter (transport)', () => {
+  it("if option.useLoggerFormat is defined, use the winston formatter (transport)", () => {
     const mock = new MockSender();
-    const message = 'test message';
-    const spy = vi.spyOn(mock, 'send');
+    const message = "test message";
+    const spy = vi.spyOn(mock, "send");
 
     const logger = winston.createLogger({
       transports: [
         new FirehoseTransport({
-          streamName: 'test',
+          streamName: "test",
           firehoseSender: mock,
           format: winston.format.simple(),
           useLoggerFormat: true,

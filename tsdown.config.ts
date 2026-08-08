@@ -1,8 +1,8 @@
-import { defineConfig } from 'tsdown';
+import { defineConfig } from "tsdown";
 
 export default defineConfig({
-  entry: ['src/index.ts'],
-  format: ['esm', 'cjs'],
+  entry: ["src/index.ts"],
+  format: ["esm", "cjs"],
   dts: true,
   clean: true,
   // tsdown owns package.json's `exports`/`main`/`module`/`types` fields and rewrites them on
@@ -11,5 +11,5 @@ export default defineConfig({
   publint: true,
   attw: true,
   outExtensions: ({ format }) =>
-    format === 'cjs' ? { js: '.cjs', dts: '.d.cts' } : { js: '.js', dts: '.d.ts' },
+    format === "cjs" ? { js: ".cjs", dts: ".d.cts" } : { js: ".js", dts: ".d.ts" },
 });

@@ -1,19 +1,19 @@
-import os from 'node:os';
-import { vi } from 'vitest';
-import winston from 'winston';
-import { FirehoseTransport } from '@/firehose-transport';
-import { MockSender } from './support/test-sender';
+import os from "node:os";
+import { vi } from "vitest";
+import winston from "winston";
+import { FirehoseTransport } from "@/firehose-transport";
+import { MockSender } from "./support/test-sender";
 
-describe('firehose logger transport', () => {
-  it('defaults to EOL delimiter being empty', () => {
+describe("firehose logger transport", () => {
+  it("defaults to EOL delimiter being empty", () => {
     const mock = new MockSender();
-    const message = 'test message';
-    const spy = vi.spyOn(mock, 'send');
+    const message = "test message";
+    const spy = vi.spyOn(mock, "send");
 
     const logger = winston.createLogger({
       transports: [
         new FirehoseTransport({
-          streamName: 'test',
+          streamName: "test",
           firehoseSender: mock,
         }),
       ],
@@ -26,38 +26,38 @@ describe('firehose logger transport', () => {
     expect(actualMessage.message).toBe(expectedMessage);
   });
 
-  it('allows the user to set EOL delimiter to a single char', () => {
+  it("allows the user to set EOL delimiter to a single char", () => {
     const mock = new MockSender();
-    const message = 'test message';
-    const spy = vi.spyOn(mock, 'send');
+    const message = "test message";
+    const spy = vi.spyOn(mock, "send");
 
     const logger = winston.createLogger({
       transports: [
         new FirehoseTransport({
-          streamName: 'test',
+          streamName: "test",
           firehoseSender: mock,
-          eol: '$',
+          eol: "$",
         }),
       ],
     });
 
     logger.info(message);
     const param = spy.mock.calls[0][0];
-    expect(param.endsWith('$')).toBe(true);
+    expect(param.endsWith("$")).toBe(true);
 
     const actualMessage = JSON.parse(param.slice(0, param.length - 1));
     expect(actualMessage.message).toBe(message);
   });
 
-  it('allows the user to set EOL delimiter to a newline', () => {
+  it("allows the user to set EOL delimiter to a newline", () => {
     const mock = new MockSender();
-    const message = 'test message';
-    const spy = vi.spyOn(mock, 'send');
+    const message = "test message";
+    const spy = vi.spyOn(mock, "send");
 
     const logger = winston.createLogger({
       transports: [
         new FirehoseTransport({
-          streamName: 'test',
+          streamName: "test",
           firehoseSender: mock,
           eol: os.EOL,
         }),
@@ -72,18 +72,18 @@ describe('firehose logger transport', () => {
     expect(actualMessage.message).toBe(message);
   });
 
-  it('allows the user to set EOL delimiter to a single char, with formatter', () => {
+  it("allows the user to set EOL delimiter to a single char, with formatter", () => {
     const mock = new MockSender();
-    const message = 'test message';
-    const spy = vi.spyOn(mock, 'send');
+    const message = "test message";
+    const spy = vi.spyOn(mock, "send");
 
     const logger = winston.createLogger({
       transports: [
         new FirehoseTransport({
-          streamName: 'test',
+          streamName: "test",
           firehoseSender: mock,
           formatter: (info) => `formatted: ${info.level} ${info.message}`,
-          eol: '$',
+          eol: "$",
         }),
       ],
     });
@@ -95,16 +95,16 @@ describe('firehose logger transport', () => {
     expect(actualMessage).toBe(expectedMessage);
   });
 
-  it('if option.useLoggerFormat is defined, options.eol still works', () => {
+  it("if option.useLoggerFormat is defined, options.eol still works", () => {
     const mock = new MockSender();
-    const message = 'test message';
-    const spy = vi.spyOn(mock, 'send');
+    const message = "test message";
+    const spy = vi.spyOn(mock, "send");
 
     const logger = winston.createLogger({
       format: winston.format.simple(),
       transports: [
         new FirehoseTransport({
-          streamName: 'test',
+          streamName: "test",
           firehoseSender: mock,
           useLoggerFormat: true,
           eol: os.EOL,
@@ -119,30 +119,30 @@ describe('firehose logger transport', () => {
     expect(actualMessage).toBe(expectedMessage);
   });
 
-  it('if metadata is passed, options.eol still works', () => {
+  it("if metadata is passed, options.eol still works", () => {
     const mock = new MockSender();
-    const message = 'test message';
-    const meta = { snakes: 'delicious' };
-    const spy = vi.spyOn(mock, 'send');
+    const message = "test message";
+    const meta = { snakes: "delicious" };
+    const spy = vi.spyOn(mock, "send");
 
     const logger = winston.createLogger({
       transports: [
         new FirehoseTransport({
-          streamName: 'test',
+          streamName: "test",
           firehoseSender: mock,
-          eol: '$',
+          eol: "$",
         }),
       ],
     });
 
     logger.info(message, meta);
     const param = spy.mock.calls[0][0];
-    expect(param.endsWith('$')).toBe(true);
+    expect(param.endsWith("$")).toBe(true);
 
     const actualMessage = JSON.parse(param.slice(0, param.length - 1));
     expect(actualMessage.message).toBe(message);
-    expect(actualMessage.snakes).toBe('delicious');
-    expect(actualMessage.level).toBe('info');
+    expect(actualMessage.snakes).toBe("delicious");
+    expect(actualMessage.level).toBe("info");
     expect(actualMessage.timestamp).toBeDefined();
   });
 });

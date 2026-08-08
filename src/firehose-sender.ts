@@ -4,8 +4,8 @@ import {
   PutRecordCommand,
   type PutRecordCommandInput,
   type PutRecordCommandOutput,
-} from '@aws-sdk/client-firehose';
-import type { MessageSender } from './interfaces.js';
+} from "@aws-sdk/client-firehose";
+import type { MessageSender } from "./interfaces.js";
 
 /**
  * Sender implementation that pipes records into AWS Kinesis Firehose
