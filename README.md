@@ -78,3 +78,26 @@ message fails to write to Firehose is to emit an 'error' event.
 `pnpm test` runs the unit suite against an injected mock sender. `pnpm run test:integration` runs a
 separate suite against a real Firehose API emulated by [LocalStack](https://www.localstack.cloud/)
 in a Docker container (via `testcontainers`), and requires Docker to be running locally.
+
+`pnpm test:aws` runs the same contract again against **real AWS**, plus S3-delivery assertions
+LocalStack can't provide (the `eol` framing, byte fidelity, and zero-buffering configuration). It
+deploys a throwaway stack with [SST](https://sst.dev/) — an S3 bucket, an IAM role, and a Firehose
+delivery stream with zero buffering — runs the suite against it, and tears it down again, including
+on Ctrl-C. It's local/on-demand only, never run in CI. Needs AWS credentials in the environment;
+Docker is not required.
+
+Budget 3–8 minutes the first time on a machine (SST fetches its Pulumi toolchain). After that, a
+full `pnpm test:aws` cycle (deploy → test → teardown) takes 3–4 minutes — the deploy and the first
+delivery to a freshly created stream are the slow parts. To iterate on an assertion without paying
+that twice, `pnpm test:aws:up` deploys and leaves the stack running, `pnpm test:aws:only` re-runs
+just the suite against it (well under a minute once the stream's already warm), and
+`pnpm test:aws:clean` tears it down when you're done. Costs are trivial — an empty S3 bucket, an
+IAM role, and a handful of PutRecord/GetObject calls — but nonzero.
+
+If a run is interrupted uncleanly (a crash, a killed process), `pnpm test:aws:clean` tears down the
+stack, and `pnpm test:aws:orphans` lists any AWS resources still tagged `winston-firehose:test`.
+
+The first deploy in a fresh AWS account/region also creates SST's own account-level bootstrap (an
+`sst-asset-*`/`sst-state-*` bucket pair and an `sst-asset` ECR repo, all empty for this stack).
+`sst remove` doesn't touch these by design, since other SST apps in the account may reuse them —
+they won't show up in the `winston-firehose:test` tag sweep above.
