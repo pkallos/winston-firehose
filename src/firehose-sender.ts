@@ -1,39 +1,27 @@
 import {
-  FirehoseClient,
-  type FirehoseClientConfig,
+  type FirehoseClient,
   PutRecordCommand,
-  type PutRecordCommandInput,
   type PutRecordCommandOutput,
 } from "@aws-sdk/client-firehose";
-import type { MessageSender } from "@/interfaces.js";
 
-/**
- * Sender implementation that pipes records into AWS Kinesis Firehose
- *
- * @export
- * @class FirehoseSender
- * @implements {MessageSender}
- */
+/** A destination for formatted log lines. Implement this to swap the real Firehose call out in tests. */
+export interface MessageSender {
+  send(message: string): Promise<unknown>;
+}
+
+/** Sends records to an AWS Kinesis Firehose delivery stream via the SDK v3 client. */
 export class FirehoseSender implements MessageSender {
-  private firehose: FirehoseClient;
-
   constructor(
-    private streamName: string,
-    firehoseOptions: FirehoseClientConfig = {},
-  ) {
-    this.firehose = new FirehoseClient(firehoseOptions);
-  }
+    private readonly streamName: string,
+    private readonly client: FirehoseClient,
+  ) {}
 
   async send(message: string): Promise<PutRecordCommandOutput> {
-    const params: PutRecordCommandInput = {
+    const command = new PutRecordCommand({
       DeliveryStreamName: this.streamName,
-      Record: {
-        Data: Buffer.from(message),
-      },
-    };
+      Record: { Data: Buffer.from(message) },
+    });
 
-    const command = new PutRecordCommand(params);
-
-    return this.firehose.send(command);
+    return this.client.send(command);
   }
 }

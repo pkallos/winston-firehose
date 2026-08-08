@@ -36,6 +36,7 @@
   "homepage": "https://github.com/pkallos/winston-firehose#readme",
   "dependencies": {
     "@aws-sdk/client-firehose": "^3.1106.0",
+    "logform": "^2.7.0",
     "triple-beam": "^1.4.1",
     "winston-transport": "^4.9.0"
   },

@@ -44,7 +44,7 @@ describe("firehose integration", () => {
   }, 60_000);
 
   it("sends a record to a real firehose delivery stream", async () => {
-    const sender = new FirehoseSender(streamName, firehoseOptions);
+    const sender = new FirehoseSender(streamName, client);
 
     const result = await sender.send("hello from a real firehose api call");
 

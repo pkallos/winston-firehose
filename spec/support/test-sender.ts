@@ -1,4 +1,4 @@
-import type { MessageSender } from "@/interfaces.js";
+import type { MessageSender } from "@/firehose-sender.js";
 
 export class MockSender implements MessageSender {
   send(message: string) {

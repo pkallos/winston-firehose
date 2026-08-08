@@ -54,11 +54,17 @@ This will write messages as strings (using JSON.stringify) into Firehose in the 
 `streamName (string) - required` The name of the Firehose stream to write to.
 
 `firehoseOptions (object) - optional/suggested` The Firehose options that are passed directly to the constructor,
-[documented by AWS here](http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Firehose.html#constructor-property)
+[documented by AWS here](http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Firehose.html#constructor-property).
+Ignored if `firehoseClient` is given.
+
+`firehoseClient (FirehoseClient) - optional` A preconfigured `FirehoseClient` to send records with, for
+consumers who need custom credentials, middleware, or retry behavior. Takes precedence over `firehoseOptions`.
 
 `useLoggerLevel (boolean) - optional` Use winston logger level if set to true. Transport level will default to `info` if undefined.
 
-`useLoggerFormat (boolean) - optional` Use winston logger format if set to true. Transport format will default to `JSON.stringify` if undefined.
+`useLoggerFormat (boolean) - optional` Use winston logger format if set to true. Transport format will default to `JSON.stringify` if undefined. Takes precedence over `formatter` when both are set.
+
+`formatter ((info) => string) - optional` Custom formatter for the log line sent to Firehose. Ignored when `useLoggerFormat` is set.
 
 `eol (string) - optional` End of line delimiter appended to each message before it's sent to Firehose. Defaults to `""` (no delimiter).
 

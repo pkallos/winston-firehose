@@ -11,6 +11,9 @@ importers:
       '@aws-sdk/client-firehose':
         specifier: ^3.1106.0
         version: 3.1106.0
+      logform:
+        specifier: ^2.7.0
+        version: 2.7.0
       triple-beam:
         specifier: ^1.4.1
         version: 1.4.1
