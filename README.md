@@ -7,7 +7,7 @@ NodeJS module, winston logging transport which writes to AWS Firehose.
 [![NPM](https://nodei.co/npm/winston-firehose.png?compact=true)](https://nodei.co/npm/winston-firehose/)
 
 ```bash
-npm install winston-firehose
+pnpm add winston-firehose
 ```
 
 ## Usage
@@ -59,6 +59,8 @@ This will write messages as strings (using JSON.stringify) into Firehose in the 
 `useLoggerLevel (boolean) - optional` Use winston logger level if set to true. Transport level will default to `info` if undefined.
 
 `useLoggerFormat (boolean) - optional` Use winston logger format if set to true. Transport format will default to `JSON.stringify` if undefined.
+
+`eol (string) - optional` End of line delimiter appended to each message before it's sent to Firehose. Defaults to `""` (no delimiter).
 
 ## Details
 

@@ -1,13 +1,13 @@
-import { FirehoseTransport } from "@/firehose-transport";
+import { vi } from 'vitest';
 import winston from 'winston';
+import { FirehoseTransport } from '@/firehose-transport';
 import { MockSender } from './support/test-sender';
 
-describe('firehose logger transport level', function () {
-
-  it('default level is info', function () {
+describe('firehose logger transport level', () => {
+  it('default level is info', () => {
     const mock = new MockSender();
-    const message = "test message";
-    const spy = jest.spyOn(mock, 'send');
+    const message = 'test message';
+    const spy = vi.spyOn(mock, 'send');
 
     const logger = winston.createLogger({
       transports: [
@@ -26,10 +26,10 @@ describe('firehose logger transport level', function () {
     expect(spy).not.toHaveBeenCalled();
   });
 
-  it('if option.level is defined, use the level', function () {
+  it('if option.level is defined, use the level', () => {
     const mock = new MockSender();
-    const message = "test message";
-    const spy = jest.spyOn(mock, 'send');
+    const message = 'test message';
+    const spy = vi.spyOn(mock, 'send');
 
     const logger = winston.createLogger({
       transports: [
@@ -48,10 +48,10 @@ describe('firehose logger transport level', function () {
     expect(spy).toHaveBeenCalled();
   });
 
-  it('if options.useLoggerLevel is true, use logger level', function () {
+  it('if options.useLoggerLevel is true, use logger level', () => {
     const mock = new MockSender();
-    const message = "test message";
-    const spy = jest.spyOn(mock, 'send');
+    const message = 'test message';
+    const spy = vi.spyOn(mock, 'send');
 
     const logger = winston.createLogger({
       level: 'warn',
@@ -71,10 +71,10 @@ describe('firehose logger transport level', function () {
     expect(spy).toHaveBeenCalled();
   });
 
-  it('if options.useLoggerLevel is false or undefined, ignore logger level', function () {
+  it('if options.useLoggerLevel is false or undefined, ignore logger level', () => {
     const mock = new MockSender();
-    const message = "test message";
-    const spy = jest.spyOn(mock, 'send');
+    const message = 'test message';
+    const spy = vi.spyOn(mock, 'send');
 
     const logger = winston.createLogger({
       level: 'warn',

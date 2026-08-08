@@ -1,10 +1,13 @@
-
 import { MESSAGE } from 'triple-beam';
 import Transport from 'winston-transport';
-import { FirehoseSender } from './firehose-sender';
-import { MessageSender } from './interfaces';
-import { DefaultFormatter, FirehoseTransportOptions, FormatterFunc } from './types';
-
+import { FirehoseSender } from './firehose-sender.js';
+import type { MessageSender } from './interfaces.js';
+import {
+  DefaultFormatter,
+  type FirehoseTransportOptions,
+  type FormatterFunc,
+  type LogInfo,
+} from './types.js';
 
 /**
  * Winston transport that pipes log messages into AWS Kinesis Firehose.
@@ -14,11 +17,10 @@ import { DefaultFormatter, FirehoseTransportOptions, FormatterFunc } from './typ
  * @extends {Transport}
  */
 export class FirehoseTransport extends Transport {
-
   private sender: MessageSender;
   private formatter?: FormatterFunc;
-  private name: string;
-  private eol = "";
+  name: string;
+  private eol = '';
 
   /**
    * Creates an instance of FirehoseTransport.
@@ -28,7 +30,7 @@ export class FirehoseTransport extends Transport {
    */
   constructor(options: FirehoseTransportOptions) {
     super(options);
-    this.name = "FirehoseLogger";
+    this.name = 'FirehoseLogger';
 
     if (!options.useLoggerLevel) {
       this.level = options.level ?? 'info';
@@ -48,18 +50,16 @@ export class FirehoseTransport extends Transport {
     this.sender = options.firehoseSender ?? new FirehoseSender(streamName, firehoseOptions);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  log(info: any, callback: () => void) {
+  log(info: LogInfo, callback: () => void): void {
     // Fire and forget so we don't back up the stream.
     if (callback) {
       setImmediate(callback);
     }
 
-    let message = info[MESSAGE];
+    let message = info[MESSAGE] as string;
 
     if (this.formatter) {
-      message = Object.assign({ timestamp: (new Date()).toISOString() }, info);
-      message = this.formatter(message);
+      message = this.formatter({ timestamp: new Date().toISOString(), ...info });
     }
 
     if (this.eol.length) {
@@ -71,7 +71,7 @@ export class FirehoseTransport extends Transport {
       .then(() => {
         this.emit('logged', message);
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
         this.emit('error', err);
       });
   }

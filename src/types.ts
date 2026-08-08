@@ -1,17 +1,24 @@
-import { FirehoseClientConfig } from "@aws-sdk/client-firehose";
-import { TransportStreamOptions } from "winston-transport";
-import { MessageSender } from "./interfaces";
+import type { FirehoseClientConfig } from '@aws-sdk/client-firehose';
+import type { TransportStreamOptions } from 'winston-transport';
+import type { MessageSender } from './interfaces.js';
 
+/**
+ * A winston log record as it reaches a transport. Winston stashes the fully
+ * formatted line under the `MESSAGE` symbol from `triple-beam`, so the index
+ * signature has to cover symbol keys too.
+ */
+export type LogInfo = {
+  level: string;
+  message: unknown;
+  [key: string]: unknown;
+  [key: symbol]: unknown;
+};
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type FormatterFunc = (message: any) => string;
+export type FormatterFunc = (message: LogInfo) => string;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const DefaultFormatter: FormatterFunc = (message: any) => JSON.stringify(message);
-
+export const DefaultFormatter: FormatterFunc = (message) => JSON.stringify(message);
 
 export type FirehoseTransportOptions = TransportStreamOptions & {
-
   /**
    * Kinesis delivery stream name.
    *
@@ -38,7 +45,6 @@ export type FirehoseTransportOptions = TransportStreamOptions & {
    */
   useLoggerFormat?: boolean;
 
-
   /**
    * Specify a custom formatter function. This overrides the behavior
    * of useLoggerFormat.
@@ -46,7 +52,6 @@ export type FirehoseTransportOptions = TransportStreamOptions & {
    * @type {FormatterFunc}
    */
   formatter?: FormatterFunc;
-
 
   /**
    * Passes through these parameters directly to the Amazon AWS Firehose SDK.
@@ -70,4 +75,4 @@ export type FirehoseTransportOptions = TransportStreamOptions & {
    * @private
    */
   firehoseSender?: MessageSender;
-}
+};
