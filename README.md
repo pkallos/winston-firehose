@@ -66,3 +66,9 @@ This will write messages as strings (using JSON.stringify) into Firehose in the 
 
 At the moment this logger sends (unacknowledged!) log messages into firehose. The behavior if the log
 message fails to write to Firehose is to emit an 'error' event.
+
+## Development
+
+`pnpm test` runs the unit suite against an injected mock sender. `pnpm run test:integration` runs a
+separate suite against a real Firehose API emulated by [LocalStack](https://www.localstack.cloud/)
+in a Docker container (via `testcontainers`), and requires Docker to be running locally.

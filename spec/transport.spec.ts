@@ -1,7 +1,7 @@
 import { vi } from "vitest";
 import winston from "winston";
-import { FirehoseTransport } from "@/firehose-transport";
-import { MockSender } from "./support/test-sender";
+import { FirehoseTransport } from "@/firehose-transport.js";
+import { MockSender } from "./support/test-sender.js";
 
 describe("firehose logger transport formatter", () => {
   it("default formatter is JSON.stringify", () => {

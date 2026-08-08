@@ -1,4 +1,4 @@
-import type { MessageSender } from "@/interfaces";
+import type { MessageSender } from "@/interfaces.js";
 
 export class MockSender implements MessageSender {
   send(message: string) {

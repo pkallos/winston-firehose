@@ -31,3 +31,16 @@ jobs:
       - run: pnpm exec publint
       - run: pnpm exec attw --pack
       - run: pnpm run smoke-test
+
+  integration:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run test:integration

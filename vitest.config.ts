@@ -24,6 +24,10 @@ export default defineConfig({
           name: "integration",
           globals: true,
           include: ["spec/integration/**/*.spec.ts"],
+          // LocalstackContainer hardcodes a 120s startup timeout; give the setup hook
+          // and the tests themselves headroom above that.
+          hookTimeout: 180_000,
+          testTimeout: 60_000,
         },
       },
     ],

@@ -1,8 +1,8 @@
 import os from "node:os";
 import { vi } from "vitest";
 import winston from "winston";
-import { FirehoseTransport } from "@/firehose-transport";
-import { MockSender } from "./support/test-sender";
+import { FirehoseTransport } from "@/firehose-transport.js";
+import { MockSender } from "./support/test-sender.js";
 
 describe("firehose logger transport", () => {
   it("defaults to EOL delimiter being empty", () => {
