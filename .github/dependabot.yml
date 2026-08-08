@@ -1,0 +1,49 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+    open-pull-requests-limit: 10
+    versioning-strategy: increase-if-necessary
+    cooldown:
+      default-days: 3
+      semver-major-days: 7
+    ignore:
+      - dependency-name: "@types/node"
+        update-types:
+          - version-update:semver-major
+    groups:
+      winston:
+        patterns:
+          - winston
+          - winston-transport
+          - logform
+          - triple-beam
+          - "@types/triple-beam"
+      aws-sdk:
+        patterns:
+          - "@aws-sdk/*"
+          - "@smithy/*"
+      dev-tooling:
+        dependency-type: development
+        update-types:
+          - minor
+          - patch
+        patterns:
+          - "*"
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+    cooldown:
+      default-days: 3
+    groups:
+      github-actions:
+        patterns:
+          - "*"
