@@ -1,6 +1,6 @@
 import type { FirehoseClientConfig } from "@aws-sdk/client-firehose";
 import type { TransportStreamOptions } from "winston-transport";
-import type { MessageSender } from "./interfaces.js";
+import type { MessageSender } from "@/interfaces.js";
 
 /**
  * A winston log record as it reaches a transport. Winston stashes the fully

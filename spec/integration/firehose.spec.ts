@@ -7,8 +7,8 @@ import {
 } from "@aws-sdk/client-firehose";
 import { LocalstackContainer, type StartedLocalStackContainer } from "@testcontainers/localstack";
 import winston from "winston";
-import { FirehoseSender } from "../../src/firehose-sender.js";
-import { FirehoseTransport } from "../../src/firehose-transport.js";
+import { FirehoseSender } from "@/firehose-sender.js";
+import { FirehoseTransport } from "@/firehose-transport.js";
 
 // The last semver-tagged LocalStack image that runs with no LOCALSTACK_AUTH_TOKEN.
 // LocalStack moved to a single authenticated image on 2026-03-23; `latest` requires a token.

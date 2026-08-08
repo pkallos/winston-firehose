@@ -1,13 +1,13 @@
 import { MESSAGE } from "triple-beam";
 import Transport from "winston-transport";
-import { FirehoseSender } from "./firehose-sender.js";
-import type { MessageSender } from "./interfaces.js";
+import { FirehoseSender } from "@/firehose-sender.js";
+import type { MessageSender } from "@/interfaces.js";
 import {
   DefaultFormatter,
   type FirehoseTransportOptions,
   type FormatterFunc,
   type LogInfo,
-} from "./types.js";
+} from "@/types.js";
 
 /**
  * Winston transport that pipes log messages into AWS Kinesis Firehose.
