@@ -2,3 +2,5 @@ node_modules/
 dist/
 .vscode/
 *.tsbuildinfo
+.sst/
+sst-env.d.ts
