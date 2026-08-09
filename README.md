@@ -68,6 +68,40 @@ consumers who need custom credentials, middleware, or retry behavior. Takes prec
 
 `eol (string) - optional` End of line delimiter appended to each message before it's sent to Firehose. Defaults to `""` (no delimiter).
 
+`buffering (object) - optional` Concatenates messages into a single Firehose record instead of sending
+a record per message. Omit it to send each message on its own. See [Buffering](#buffering).
+
+## Buffering
+
+Firehose bills [per record, in 5KB increments](https://aws.amazon.com/kinesis/data-firehose/pricing/),
+so a 200-byte log line costs the same as a 5KB one. Buffering packs a run of small lines into one
+record, which is where the saving comes from:
+
+```javascript
+new FirehoseTransport({
+  streamName: "firehose_stream_name",
+  eol: "\n",
+  buffering: {
+    bufferSize: 500, // messages to hold before sending a record
+    bufferSizeKb: 5, // buffered KiB to hold before sending a record
+    flushTimeout: 30000, // ms a partial record waits before being sent anyway
+  },
+});
+```
+
+Every field is optional, and the values above are the defaults. `bufferSizeKb` defaults to Firehose's
+5KB billing increment because there's no further per-byte saving above it, only more messages to lose
+if the process dies; Firehose caps a record at `1000` KiB. `bufferSize` defaults to the 500 records
+Firehose will
+[de-aggregate from one blob](https://docs.aws.amazon.com/firehose/latest/APIReference/API_PutRecord.html).
+
+A record is its messages concatenated, byte for byte the same as what separate records deliver, so
+`eol` is what a downstream consumer needs to split them apart, with or without buffering.
+
+Whatever is still buffered is sent when the logger is closed (`logger.close()`). For a short-lived
+process that doesn't close its logger (a Lambda handler, say), `await transport.flush()` sends it on
+demand.
+
 ## Details
 
 At the moment this logger sends (unacknowledged!) log messages into firehose. The behavior if the log
@@ -80,7 +114,8 @@ separate suite against a real Firehose API emulated by [LocalStack](https://www.
 in a Docker container (via `testcontainers`), and requires Docker to be running locally.
 
 `pnpm test:aws` runs the same contract again against **real AWS**, plus S3-delivery assertions
-LocalStack can't provide (the `eol` framing, byte fidelity, and zero-buffering configuration). It
+LocalStack can't provide (the `eol` framing, byte fidelity, buffered-record delivery, and the
+zero-buffering configuration). It
 deploys a throwaway stack with [SST](https://sst.dev/) — an S3 bucket, an IAM role, and a Firehose
 delivery stream with zero buffering — runs the suite against it, and tears it down again, including
 on Ctrl-C. It's local/on-demand only, never run in CI. Needs AWS credentials in the environment;
