@@ -101,3 +101,12 @@ The first deploy in a fresh AWS account/region also creates SST's own account-le
 `sst-asset-*`/`sst-state-*` bucket pair and an `sst-asset` ECR repo, all empty for this stack).
 `sst remove` doesn't touch these by design, since other SST apps in the account may reuse them —
 they won't show up in the `winston-firehose:test` tag sweep above.
+
+### Releasing
+
+Releases are automated by changesets (`.github/workflows/release.yml`): merging its "Version
+Packages" PR publishes to npm. While `.changeset/pre.json` has the package in prerelease mode,
+`publishConfig.tag` in `package.json` pins the default npm dist-tag to `next`, so a manual
+`npm publish` (bypassing the automated pipeline) can't accidentally overwrite `latest` with a
+prerelease. Remove that `tag` field when running `pnpm changeset pre exit` to ship the first
+stable release, or the stable version will itself publish under `next` instead of `latest`.
