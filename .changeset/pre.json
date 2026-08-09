@@ -4,5 +4,9 @@
   "initialVersions": {
     "winston-firehose": "4.0.0-next.0"
   },
-  "changesets": []
+  "changesets": [
+    "aws-sst-integration-tests",
+    "localstack-integration-tests",
+    "modernize-toolchain"
+  ]
 }
