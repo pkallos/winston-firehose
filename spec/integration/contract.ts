@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { DescribeDeliveryStreamCommand, FirehoseClient } from "@aws-sdk/client-firehose";
 import winston from "winston";
+import { BufferedSender } from "@/buffered-sender.js";
 import { FirehoseSender } from "@/firehose-sender.js";
 import { FirehoseTransport } from "@/firehose-transport.js";
 import type { DeliveredObjectReader, FirehoseBackend, FirehoseTarget } from "./support/backend.js";
@@ -31,6 +32,30 @@ async function logSerially(
     sent.push(await logged);
   }
   return sent;
+}
+
+/**
+ * Logs every message through a buffering transport and returns the lines it sent. They
+ * can't be awaited one at a time the way `logSerially` does it: a buffered message only
+ * reports `logged` once the whole record carrying it lands.
+ */
+async function logBuffered(
+  transport: FirehoseTransport,
+  logger: winston.Logger,
+  messages: readonly string[],
+): Promise<string[]> {
+  const logged: string[] = [];
+  transport.on("logged", (line: string) => logged.push(line));
+
+  for (const message of messages) {
+    logger.info(message);
+    // winston writes one entry per turn of the loop.
+    await new Promise((resolve) => setImmediate(resolve));
+  }
+  await transport.flush();
+  await vi.waitFor(() => expect(logged).toHaveLength(messages.length));
+
+  return logged;
 }
 
 const EOL_TEST_MESSAGES = ["one", "two", "three"] as const;
@@ -112,6 +137,45 @@ export function describeFirehoseContract(backend: FirehoseBackend): void {
 
       const message = await logged;
       expect(JSON.parse(message).message).toBe("sent through a caller-supplied client");
+    });
+
+    it("buffers several messages into a single firehose record", async () => {
+      const sender = new BufferedSender(new FirehoseSender(target.streamName, client), {
+        bufferSize: EOL_TEST_MESSAGES.length,
+      });
+
+      const results = await Promise.all(
+        EOL_TEST_MESSAGES.map((message) => sender.send(`${message}\n`)),
+      );
+
+      // One `PutRecord` result shared by all three: the real API took a single billable
+      // record, which no assertion against the delivered bytes could tell apart.
+      expect(new Set(results).size).toBe(1);
+    });
+
+    it("sends a partial record once the flush timeout elapses", async () => {
+      const sender = new BufferedSender(new FirehoseSender(target.streamName, client), {
+        bufferSize: 100,
+        flushTimeout: 500,
+      });
+
+      // Nothing flushes this by hand, so the timer is the only thing that can send it.
+      const result = await sender.send("sent by the flush timeout\n");
+
+      expect(result).toHaveProperty("RecordId");
+    });
+
+    it("fills a record to the default buffer size and the api takes it", async () => {
+      const sender = new BufferedSender(new FirehoseSender(target.streamName, client), {
+        bufferSize: 50,
+      });
+      // 50 of these is 5,050 bytes, just under the 5 KiB `bufferSizeKb` default, so the
+      // record goes out full: the shape the default config actually produces.
+      const line = `${"x".repeat(100)}\n`;
+
+      const results = await Promise.all(Array.from({ length: 50 }, () => sender.send(line)));
+
+      expect(new Set(results).size).toBe(1);
     });
 
     it("emits an error for a delivery stream that doesn't exist", async () => {
@@ -213,6 +277,132 @@ export function describeFirehoseContract(backend: FirehoseBackend): void {
         expect(() => JSON.parse(jammed)).toThrow();
       },
     );
+
+    it.skipIf(!backend.deliversToS3)(
+      "delivers a buffered record as the same newline-delimited lines",
+      async () => {
+        const marker = randomUUID();
+        const transport = new FirehoseTransport({
+          streamName: target.streamName,
+          firehoseOptions: target.firehoseOptions,
+          eol: "\n",
+          buffering: { bufferSize: EOL_TEST_MESSAGES.length },
+        });
+        const logger = winston.createLogger({ transports: [transport] });
+
+        const logged = await logBuffered(
+          transport,
+          logger,
+          EOL_TEST_MESSAGES.map((message) => `${marker} ${message}`),
+        );
+
+        const run = logged.join("");
+        const object = await delivered().waitForObjectContaining(run);
+
+        const start = object.body.indexOf(run);
+        const lines = object.body
+          .slice(start, start + run.length)
+          .split("\n")
+          .filter(Boolean);
+        expect(lines.map((line) => JSON.parse(line).message)).toEqual(
+          EOL_TEST_MESSAGES.map((message) => `${marker} ${message}`),
+        );
+      },
+    );
+
+    it.skipIf(!backend.deliversToS3)(
+      "without eol, a buffered record is jammed together like separate records",
+      async () => {
+        // The equivalence the whole design rests on: aggregating changes what a record
+        // costs, never what reaches the destination. Only the delivered bytes can show
+        // that buffering neither adds a separator of its own nor drops one.
+        const marker = randomUUID();
+        const transport = new FirehoseTransport({
+          streamName: target.streamName,
+          firehoseOptions: target.firehoseOptions,
+          buffering: { bufferSize: EOL_TEST_MESSAGES.length },
+        });
+        const logger = winston.createLogger({ transports: [transport] });
+
+        const logged = await logBuffered(
+          transport,
+          logger,
+          EOL_TEST_MESSAGES.map((message) => `${marker} ${message}`),
+        );
+
+        const run = logged.join("");
+        const object = await delivered().waitForObjectContaining(run);
+
+        const start = object.body.indexOf(run);
+        const jammed = object.body.slice(start, start + run.length);
+        expect(jammed).toMatch(/\}\{/);
+        expect(jammed).not.toContain("\n");
+        expect(() => JSON.parse(jammed)).toThrow();
+      },
+    );
+
+    it.skipIf(!backend.deliversToS3)("delivers a record filled to the cap intact", async () => {
+      // A near-full record of multi-byte lines, which is where a sizing or encoding bug
+      // would show up: the buffer is measured in bytes but the blob is built from a string,
+      // and Firehose de-aggregates blobs of its own accord.
+      const marker = randomUUID();
+      const lineCount = 50;
+      const transport = new FirehoseTransport({
+        streamName: target.streamName,
+        firehoseOptions: target.firehoseOptions,
+        formatter: (info) => `${marker} ${info.message} 日本語 🔥`,
+        eol: "\n",
+        buffering: { bufferSize: lineCount },
+      });
+      const logger = winston.createLogger({ transports: [transport] });
+
+      const logged = await logBuffered(
+        transport,
+        logger,
+        Array.from({ length: lineCount }, (_, index) => `${index}`.padStart(4, "0").repeat(11)),
+      );
+
+      const run = logged.join("");
+      // 97 bytes a line, so the record sits just under the 5 KiB `bufferSizeKb` default.
+      const bytes = Buffer.byteLength(run);
+      expect(bytes).toBeGreaterThan(4 * 1024);
+      expect(bytes).toBeLessThanOrEqual(5 * 1024);
+
+      const object = await delivered().waitForObjectContaining(run);
+
+      const start = object.body.indexOf(run);
+      const lines = object.body
+        .slice(start, start + run.length)
+        .split("\n")
+        .filter(Boolean);
+      expect(lines).toHaveLength(lineCount);
+    });
+
+    it.skipIf(!backend.deliversToS3)("delivers consecutive records in the order sent", async () => {
+      // The chaining invariant end to end: two records, and the wait below only resolves
+      // once one object holds the second directly behind the first.
+      const marker = randomUUID();
+      const messages = ["one", "two", "three", "four"].map((message) => `${marker} ${message}`);
+      const transport = new FirehoseTransport({
+        streamName: target.streamName,
+        firehoseOptions: target.firehoseOptions,
+        eol: "\n",
+        buffering: { bufferSize: 2 },
+      });
+      const logger = winston.createLogger({ transports: [transport] });
+
+      const logged = await logBuffered(transport, logger, messages);
+
+      const run = logged.join("");
+      const object = await delivered().waitForObjectContaining(run);
+
+      const start = object.body.indexOf(run);
+      const lines = object.body
+        .slice(start, start + run.length)
+        .split("\n")
+        .filter(Boolean);
+      expect(lines.map((line) => JSON.parse(line).message)).toEqual(messages);
+    });
 
     it.skipIf(!backend.deliversToS3)("delivers the formatted bytes verbatim", async () => {
       const marker = randomUUID();

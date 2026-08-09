@@ -17,6 +17,11 @@ export class RecordingSender implements MessageSender {
   failNext(error: Error): void {
     this.failure = error;
   }
+
+  /** Undoes `failNext`, so sends are recorded again. */
+  recover(): void {
+    this.failure = undefined;
+  }
 }
 
 /**
