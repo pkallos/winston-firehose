@@ -104,9 +104,6 @@ they won't show up in the `winston-firehose:test` tag sweep above.
 
 ### Releasing
 
-Releases are automated by changesets (`.github/workflows/release.yml`): merging its "Version
-Packages" PR publishes to npm. While `.changeset/pre.json` has the package in prerelease mode,
-`publishConfig.tag` in `package.json` pins the default npm dist-tag to `next`, so a manual
-`npm publish` (bypassing the automated pipeline) can't accidentally overwrite `latest` with a
-prerelease. Remove that `tag` field when running `pnpm changeset pre exit` to ship the first
-stable release, or the stable version will itself publish under `next` instead of `latest`.
+Releases are automated by changesets (`.github/workflows/release.yml`): pushing changesets to
+`master` makes it open a "Version Packages" PR bumping the version and CHANGELOG; merging that PR
+publishes to npm and cuts a GitHub release.
