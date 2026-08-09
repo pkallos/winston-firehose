@@ -64,8 +64,7 @@
     "winston": "^3.19.0"
   },
   "publishConfig": {
-    "access": "public",
-    "tag": "next"
+    "access": "public"
   },
   "files": [
     "dist"
