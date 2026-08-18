@@ -1,4 +1,4 @@
-# [Winston Firehose](https://www.philkallos.com/winston-firehose/)
+# Winston Firehose
 
 NodeJS module, winston logging transport which writes to AWS Firehose.
 
