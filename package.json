@@ -49,7 +49,7 @@
     "@arethetypeswrong/cli": "^0.18.5",
     "@aws-sdk/client-s3": "^3.1106.0",
     "@biomejs/biome": "^2.5.7",
-    "@changesets/cli": "^2.31.1",
+    "@changesets/cli": "^3.0.0",
     "@testcontainers/localstack": "^12.1.0",
     "@types/node": "^22.15.0",
     "@types/triple-beam": "^1.3.5",
