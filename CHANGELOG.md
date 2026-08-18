@@ -1,5 +1,11 @@
 # winston-firehose
 
+## 4.0.1
+
+### Patch Changes
+
+- e199d63: `dist` is byte-identical to 4.0.0; the only change is the `@changesets/cli` dev dependency moving to v3.
+
 ## 4.0.0
 
 ### Major Changes
