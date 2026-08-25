@@ -1,6 +1,6 @@
 # Winston Firehose
 
-NodeJS module, winston logging transport which writes to AWS Firehose.
+Logging transport for [Winston](https://github.com/winstonjs/winston) which writes to Amazon AWS Firehose.
 
 ## Installation
 
