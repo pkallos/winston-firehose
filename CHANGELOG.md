@@ -1,5 +1,11 @@
 # winston-firehose
 
+## 4.0.2
+
+### Patch Changes
+
+- 4c31d9d: Update dependencies and toolchain.
+
 ## 4.0.1
 
 ### Patch Changes

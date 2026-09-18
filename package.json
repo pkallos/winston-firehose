@@ -1,6 +1,6 @@
 {
   "name": "winston-firehose",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "Winston logging transport for logging into Amazon AWS Firehose.",
   "type": "module",
   "sideEffects": false,
