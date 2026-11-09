@@ -7,6 +7,7 @@ on:
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 permissions:
+  actions: write
   contents: write
   pull-requests: write
   id-token: write
@@ -22,6 +23,12 @@ jobs:
           node-version: 24
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - uses: changesets/action@v2
+      - id: changesets
+        uses: changesets/action@v2
         with:
           publish-script: pnpm release
+      - name: Run checks on the version PR
+        if: steps.changesets.outputs.has-changesets == 'true'
+        run: gh workflow run build.yml --ref changeset-release/master
+        env:
+          GH_TOKEN: ${{ github.token }}
