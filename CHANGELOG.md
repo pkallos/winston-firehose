@@ -1,5 +1,11 @@
 # winston-firehose
 
+## 4.0.4
+
+### Patch Changes
+
+- 47e8a6f: Update the AWS SDK and dev toolchain.
+
 ## 4.0.3
 
 ### Patch Changes
