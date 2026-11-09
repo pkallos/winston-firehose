@@ -1,5 +1,11 @@
 # winston-firehose
 
+## 4.0.3
+
+### Patch Changes
+
+- 5520a02: Update dependencies and toolchain, and publish releases with npm trusted publishing.
+
 ## 4.0.2
 
 ### Patch Changes
