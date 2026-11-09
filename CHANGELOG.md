@@ -1,5 +1,11 @@
 # winston-firehose
 
+## 4.0.5
+
+### Patch Changes
+
+- a184187: Release workflow changes only; no changes to the published package.
+
 ## 4.0.4
 
 ### Patch Changes
