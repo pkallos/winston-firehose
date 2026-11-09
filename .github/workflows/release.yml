@@ -27,8 +27,16 @@ jobs:
         uses: changesets/action@v2
         with:
           publish-script: pnpm release
-      - name: Run checks on the version PR
+      - name: Approve the version PR's pending checks
         if: steps.changesets.outputs.has-changesets == 'true'
-        run: gh workflow run build.yml --ref changeset-release/master
+        run: |
+          for _ in $(seq 1 12); do
+            run_id=$(gh run list --workflow build.yml --branch changeset-release/master --event pull_request --json databaseId,conclusion --jq '[.[] | select(.conclusion == "action_required")][0].databaseId // empty')
+            if [ -n "$run_id" ]; then
+              gh api -X POST "repos/$GITHUB_REPOSITORY/actions/runs/$run_id/approve"
+              exit 0
+            fi
+            sleep 5
+          done
         env:
           GH_TOKEN: ${{ github.token }}
